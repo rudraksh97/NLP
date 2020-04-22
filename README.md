@@ -1,2 +1,438 @@
 # NLP
 This is not a project but it is one which will help you understand NLP. Currently in development.
+
+
+Learning NLP
+
+1)Naive Bayes Classifier - Just uses the bayes theorem to find 
+P(class/new_data)- (Posterior) we have to find out for each class.
+Posterior is proportional to likelihood times P(class)
+
+P(class/new_data) = P(new_data/class)*P(class)
+		                --------------------------
+		                      P(new_data)
+
+p(class) is Prior
+p(new_data/class) is likelihood
+p(class/new_data) is posterior
+
+new_data consits of 5 words w1,w2,w3,w4,w5
+
+The main feature of naive bayes is that every word
+is independent of other word. So
+
+p(new_data/class) = p(w1/new_data)*P(w1/new_data)* * * P(w5/new_data)
+
+The class having the highest probability will be assigned 
+to the new_data sample. If we are classifying the sentence,
+it is not possible to find P(new_data/class), so we break
+the sentence into words do P(sentence/class) = Pie P(word/class)
+Counter Vectorizer from sklearn. It uses Term document frequency
+for each class. 
+
+2) A document-term matrix or term-document matrix is a mathematical
+ matrix that describes the frequency of terms that occur in a 
+collection of documents. In a document-term matrix, rows 
+correspond to documents in the collection and columns 
+correspond to terms. There are various schemes for 
+determining the value that each entry in the matrix should take. 
+One such scheme is tf-idf.
+
+3) Laplace Smoothing - Done when a word in the sentence is not available and you need its probability given class
+P(this word/class) as this word was not in training set but in the new input data.
+
+4) We can also tokenize the sentence and get the words out it.
+
+5) " ".join(list) -  it gives a string with words in the list seperated by space
+
+6) 	import re
+	lstrip()
+	rstrip()
+	strip()
+	split()
+
+7) Code to remove a regex pattern
+ 
+import re 
+
+regex_pattern = "#[\w]*"  
+
+def remove_regex(input_text, regex_pattern):
+    urls = re.finditer(regex_pattern, input_text) 
+    for i in urls: 
+        input_text = re.sub(i.group().strip(), '', input_text)
+    return input_text
+
+remove_regex("remove this #hashtag from analytics vidhya", regex_pattern)
+
+8) Lexicon Normalisation
+Two ways
+1) stemming
+2) Lemmatization
+
+Stemming:  Stemming is a rudimentary rule-based process of stripping the 
+suffixes (“ing”, “ly”, “es”, “s” etc) from a word.
+
+Lemmatization: Lemmatization, on the other hand, is an organized & step by step procedure of 
+obtaining the root form of the word, it makes use of vocabulary (dictionary importance of 
+words) and morphological analysis (word structure and grammar relations).
+
+from nltk.stem.wordnet import WordNetLemmatizer 
+lem = WordNetLemmatizer()
+
+from nltk.stem.porter import PorterStemmer 
+stem = PorterStemmer()
+
+word = "multiplying" 
+lem.lemmatize(word, "v")
+>> "multiply" 
+stem.stem(word)
+>> "multipli"
+
+9) Object Standardisation
+
+lookup_dict = {'rt':'Retweet', 'dm':'direct message', "awsm" : "awesome", "luv" :"love", "..."}
+def _lookup_words(input_text):
+    words = input_text.split() 
+    new_words = [] 
+    for word in words:
+        if word.lower() in lookup_dict:
+            word = lookup_dict[word.lower()]
+        new_words.append(word) new_text = " ".join(new_words) 
+        return new_text
+
+_lookup_words("RT this is a retweeted tweet by Shivam Bansal")
+>> "Retweet this is a retweeted tweet by Shivam Bansal"
+
+
+10) Steps for effective text data cleaning
+
+a) Escaping HTML characters: Data obtained from web usually 
+contains a lot of html entities like &lt; &gt; &amp; which 
+embedded in the original data. It is thus necessary to get rid 
+of these entities. One approach is to directly remove them by the 
+use of specific regular expressions. Another approach is to use 
+appropriate packages and modules (for example htmlparser of Python), 
+which can convert these entities to standard html tags. For example: 
+&lt; is converted to “<” and &amp; is converted to “&”.
+
+b) Decoding data: Thisis the process of transforming information from 
+complex symbols to simple and easier to understand characters. Text 
+data may be subject to different forms of decoding like “Latin”, “UTF8” 
+etc. Therefore, for better analysis, it is necessary to keep the complete 
+data in standard encoding format. UTF-8 encoding is widely accepted and 
+is recommended to use.
+
+c) Apostrophe Lookup: To avoid any word sense disambiguation in text, 
+it is recommended to maintain proper structure in it and to abide by the 
+rules of context free grammar. When apostrophes are used, chances of 
+disambiguation increases.
+
+d) Removal of Stop-words: When data analysis needs to be data driven at the word level, 
+the commonly occurring words (stop-words) should be removed. One can either create a 
+long list of stop-words or one can use predefined language specific libraries.
+
+e) Removal of Punctuations: All the punctuation marks according to the priorities 
+should be dealt with. For example: “.”, “,”,”?” are important punctuations that should be 
+retained while others need to be removed.
+
+f) Removal of Expressions: Textual data (usually speech transcripts) may contain human 
+expressions like [laughing], [Crying], [Audience paused]. These expressions are usually 
+non relevant to content of the speech and hence need to be removed. Simple regular 
+expression can be useful in this case.
+
+g) Split Attached Words: We humans in the social forums generate text data, which is 
+completely informal in nature. Most of the tweets are accompanied with multiple attached words 
+like RainyDay, PlayingInTheCold etc. These entities can be split into their normal forms using 
+simple rules and regex.
+
+		cleaned = “ ”.join(re.findall(‘[A-Z][^A-Z]*’, original_tweet))
+
+h) Slangs lookup: Again, social media comprises of a majority of slang words. These 
+words should be transformed into standard words to make free text. The words like luv 
+will be converted to love, Helo to Hello. The similar approach of apostrophe look up 
+can be used to convert slangs to standard words. A number of sources are available on 
+the web, which provides lists of all possible slangs, this would be your holy grail 
+and you could use them as lookup dictionaries for conversion purposes.
+
+i) Standardizing words: Sometimes words are not in proper formats. For example: 
+“I looooveee you” should be “I love you”. Simple rules and regular expressions 
+can help solve these cases.
+
+		tweet = ''.join(''.join(s)[:2] for _, s in itertools.groupby(tweet))
+
+j) Removal of urls
+k) Grammer check
+l) Spelling Check
+
+11) Text to Features
+a) Dependency Parsing - Dependency Tree is formed. -  advmod etc
+b) POS Tagging - NNP etc
+c) Entity extraction - Entity Detection algorithms are generally ensemble 
+models of rule based parsing, dictionary lookups, pos tagging and dependency parsing
+	
+	1) Named Entity extraction
+	2) Topic Modelling: Topic modeling is a process of automatically identifying 
+	the topics present in a text corpus, it derives the hidden patterns among the words 
+	in the corpus in an unsupervised manner. Topics are defined as “a repeating pattern 
+	of co-occurring terms in a corpus”. A good topic model results in – “health”, 
+	“doctor”, “patient”, “hospital” for a topic – Healthcare, and “farm”, “crops”, 
+	“wheat” for a topic – “Farming”.
+
+	LDA is used to do it. Latent Drichlet allocation
+	3) 
+
+
+
+12) Knowledge Graphs can be used to improve Named Entity Extraction
+
+
+
+
+
+
+
+
+
+13) TF-IDF (Term frequency Inverse Document Frequency)
+
+Topic Frequency-Inverse Document Frequency (TF-IDF) is a way to normalize term 
+counts by taking into account how often they appear in a document, how long 
+the document is, and how commmon/rare the term is.
+
+Tf-idf stands for term frequency-inverse document frequency, and the tf-idf weight 
+is a weight often used in information retrieval and text mining. This weight is a 
+statistical measure used to evaluate how important a word is to a document in a 
+collection or corpus. The importance increases proportionally to the number of times 
+a word appears in the document but is offset by the frequency of the word in the corpus.
+ Variations of the tf-idf weighting scheme are often used by search engines as a 
+central tool in scoring and ranking a document's relevance given a user query
+
+Tf-idf can be successfully used for stop-words filtering in various subject 
+fields including text summarization and classification.
+
+How to Compute:
+
+Typically, the tf-idf weight is composed by two terms: the first computes 
+the normalized Term Frequency (TF), aka. the number of times a word appears 
+in a document, divided by the total number of words in that document; 
+the second term is the Inverse Document Frequency (IDF), computed as 
+the logarithm of the number of the documents in the corpus divided by 
+the number of documents where the specific term appears.
+
+TF: Term Frequency, which measures how frequently a term occurs in a 
+document. Since every document is different in length, it is possible 
+that a term would appear much more times in long documents than shorter 
+ones. Thus, the term frequency is often divided by the document length 
+(aka. the total number of terms in the document) as a way of normalization:
+
+TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
+
+IDF: Inverse Document Frequency, which measures how important a term is.
+While computing TF, all terms are considered equally important. 
+However it is known that certain terms, such as "is", "of", and "that", 
+may appear a lot of times but have little importance. Thus we need to 
+weigh down the frequent terms while scale up the rare ones, by computing 
+the following:
+
+IDF(t) = log_e(Total number of documents / Number of documents with term t in it).
+
+See below for a simple example.
+
+Example:
+
+Consider a document containing 100 words wherein the word cat appears 
+3 times. The term frequency (i.e., tf) for cat is then (3 / 100) = 0.03. 
+Now, assume we have 10 million documents and the word cat appears in one 
+thousand of these. Then, the inverse document frequency (i.e., idf) is 
+calculated as log(10,000,000 / 1,000) = 4. Thus, the Tf-idf weight is 
+the product of these quantities: 0.03 * 4 = 0.12.
+
+14) Bag of words: Vectors banane ka tareeka
+We need a way to represent text data for machine learning algorithm and the 
+bag-of-words model helps us to achieve that task. The bag-of-words model is 
+simple to understand and implement. It is a way of extracting features from 
+the text for use in machine learning algorithms.
+
+Bag of words consists of techniques like Tf-idf, tf, or just normal count(document term matrix)
+
+In this approach, we use the tokenized words for each observation and find 
+out the frequency of each token.
+
+Let’s take an example to understand this concept in depth.
+
+“It was the best of times”
+“It was the worst of times”
+“It was the age of wisdom”
+“It was the age of foolishness”
+
+We treat each sentence as a separate document and we make a list of all words 
+from all the four documents excluding the punctuation. We get,‘It’, ‘was’, 
+‘the’, ‘best’, ‘of’, ‘times’, ‘worst’, ‘age’, ‘wisdom’, ‘foolishness’
+
+The next step is the create vectors. Vectors convert text that can be 
+used by the machine learning algorithm.
+
+We take the first document — “It was the best of times” and we check
+ the frequency of words from the 10 unique words.
+
+“it” = 1
+“was” = 1
+“the” = 1
+“best” = 1
+“of” = 1
+“times” = 1
+“worst” = 0
+“age” = 0
+“wisdom” = 0
+“foolishness” = 0
+
+Rest of the documents will be:
+“It was the best of times” = [1, 1, 1, 1, 1, 1, 0, 0, 0, 0]
+“It was the worst of times” = [1, 1, 1, 0, 1, 1, 1, 0, 0, 0]
+“It was the age of wisdom” = [1, 1, 1, 0, 1, 0, 0, 1, 1, 0]
+“It was the age of foolishness” = [1, 1, 1, 0, 1, 0, 0, 1, 0, 1]
+
+In this approach, each word or token is called a “gram”. Creating a vocabulary of two-word pairs is called a bigram model.
+For example, the bigrams in the first document : “It was the best of times” are as follows:
+“it was”
+“was the”
+“the best”
+“best of”
+“of times”
+
+
+
+
+
+
+
+15) N-gram
+A combination of N words together are called N-Grams. N grams (N > 1) are 
+generally more informative as compared to words (Unigrams) as features. 
+Also, bigrams (N = 2) are considered as the most important features of 
+all the others.
+
+def generate_ngrams(text, n):
+    words = text.split()
+    output = []  
+    for i in range(len(words)-n+1):
+        output.append(words[i:i+n])
+    return output
+
+>>> generate_ngrams('this is a sample text', 2)
+# [['this', 'is'], ['is', 'a'], ['a', 'sample'], , ['sample', 'text']]
+
+
+16) BoW is different from Word2vec.The main difference is that 
+Word2vec produces one vector per word, whereas BoW produces one
+number (a wordcount). Word2vec is great for digging into documents 
+and identifying content and subsets of content. Its vectors represent
+each word’s context, the ngrams of which it is a part. BoW is a good,
+simple method for classifying documents as a whole
+
+17) Brown clusters and LSA features.
+
+
+
+
+18) Word embeddings
+
+Skipgram Model
+
+
+Word2vec
+
+
+
+Glove
+
+
+
+18) Data Augmentation in NLP
+
+EDA: Easy data Sugumentation
+a) Synonym replacement
+b) Random Insert
+c) Random Swap
+d) Random delete
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BERT (Bidirectional Encoder Representations from Transformers) 
+BERT’s key technical innovation is applying the bidirectional training of 
+Transformer, a popular attention model, to language modelling. This is in 
+contrast to previous efforts which looked at a text sequence either from 
+left to right or combined left-to-right and right-to-left training.
+
+In the paper, the researchers detail a novel technique named Masked LM (MLM) 
+which allows bidirectional training in models in which it was previously impossible.
+
+How BERT works?
+BERT makes use of Transformer, an attention mechanism that learns contextual 
+relations between words (or sub-words) in a text. In its vanilla form, Transformer 
+includes two separate mechanisms — an encoder that reads the text input and a 
+decoder that produces a prediction for the task. Since BERT’s goal is to generate 
+a language model, only the encoder mechanism is necessary
+
+As opposed to directional models, which read the text input sequentially 
+(left-to-right or right-to-left), the Transformer encoder reads the entire 
+sequence of words at once. Therefore it is considered bidirectional, though 
+it would be more accurate to say that it’s non-directional. This 
+characteristic allows the model to learn the context of a word based 
+on all of its surroundings (left and right of the word).
+
+The input is a sequence of tokens, which are first embedded into vectors 
+and then processed in the neural network. The output is a sequence of vectors 
+of size H, in which each vector corresponds to an input token with the same index.
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
